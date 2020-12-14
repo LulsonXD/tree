@@ -1,66 +1,75 @@
 <!doctype html>
 
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Дерево</title>
+    <title>Tree</title>
     <style>
-        .checked{
-            background-color: blue;
+        .selected{
+            background-color: rgb(136, 203, 241);
         }
-        .unchecked{
+        .unselected{
             background-color: white;
         }
     </style>
 </head>
 <body>
     <h1>Дерево</h1> 
-    <input type="button" value="Создать" onclick="newChild()">
-    <input type="button" value="Переименовать" onclick="changeName()">
-    <input type="button" value="Удалить" onclick="remove()"><br>
+    <input type="button" value="Создать" onclick="create()">
+    <input type="button" value="Переименовать" onclick="rename()">
+    <input type="button" value="Удалить" onclick="del()"><br><br>
     <div id="0">Корневой элемент</div>
     <script>
+        var buffer = [];
         var id = 0;
-        var oldest = document.getElementById('0');
-        var focus = false;
-        oldest.classList.add('unchecked');
-        oldest.addEventListener('click', highlite);
-        oldest.style.marginLeft = '10px';
-        function highlite(event){
-            if (focus){focus.classList.remove('checked');focus.classList.toggle('unchecked');}
-            focus = event.target;
-            focus.classList.toggle('checked');
-            focus.classList.toggle('unchecked');
+        var root = document.getElementById('0');
+        var selected = false;
+        root.classList.add('unselected');
+        root.addEventListener('click', tog);
+        root.style.marginLeft = '10px';
+        document.addEventListener('click', function(event){
+            if(event.target != selected && selected != false){selected.classList.remove('selected');}
+        })
+        function tog(event){
+            if (selected){selected.classList.remove('selected');selected.classList.toggle('unselected');}
+            selected = event.target;
+            selected.classList.toggle('selected');
+            selected.classList.toggle('unselected');
         }
-        function newChild(){
-            focus.style.position = 'relative';
-            element = document.createElement('div');
-            element.id = id + 1;
-            element.textContent = prompt();
-            element.style.position = 'relative';
-            element.style.left = '17px';
-            element.style.width = '100%';
-            element.classList.add('unchecked');
-            element.addEventListener('click', highlite);
-            focus.appendChild(element);
-            if (focus.children.length == 1){
-                var btn = document.createElement('img');
-                btn.id = String(focus.id) + 'png';
-                btn.src = 'minus.png'
-                btn.style.position = 'absolute';
-                btn.style.left = '-10px';
-                btn.style.top = '0';
-                btn.classList.add('minus');
-                btn.addEventListener('click', folder);
-                focus.appendChild(btn);
+        function create(){
+            if (!selected){alert('No element selected')}
+            else{
+                var text = prompt();
+                selected.style.position = 'relative';
+                elem = document.createElement('div');
+                elem.id = id + 1;
+                elem.textContent = text;
+                elem.style.position = 'relative';
+                elem.style.left = '20px';
+                elem.style.width = '1500px';
+                elem.classList.add('unselected');
+                elem.addEventListener('click', tog);
+                selected.appendChild(elem);
+                if (selected.children.length == 1){
+                    var btn = document.createElement('img');
+                    btn.id = String(selected.id) + 'png';
+                    btn.src = 'minus.png'
+                    btn.style.position = 'absolute';
+                    btn.style.left = '-15px';
+                    btn.style.top = '0px';
+                    btn.classList.add('minus');
+                    btn.addEventListener('click', folder);
+                    selected.appendChild(btn);
+                }
+                ++id;
             }
-            ++id;
         }
-        function changeName(){
-            focus.style.textContent = prompt();
+        function rename(){
+            var txt = prompt();
+            if (txt){selected.textContent = txt;}
         }
-        function remove(){
-            focus.remove();
+        function del(){
+            selected.remove();
         }
         function folder(event){
             var elem = event.target;
